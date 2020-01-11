@@ -1,7 +1,7 @@
 # EmbeddedSystem-term
 한백전자 HBE-SM7-S4412를 이용한 숫자게임 
 
-19년 11월부터 12월 10일까지 진행한 Term-Project이며 사용한 Devide Driver로는
+19년 11월부터 12월 10일까지 진행한 Term-Project이며 사용한 Device Driver로는
   1. Dotmatrix
   2. Keypad
   3. Led
