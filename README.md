@@ -9,6 +9,7 @@
 19년 11월부터 12월 10일까지 진행한 Term-Project입니다.
 
 ---------explanation---------
+AndroX Studio를 사용하였고 내장된 eclipse를 사용하여 코드를 작성하였습니다.
 
 사용한 Device Driver로는
   1. Dotmatrix
