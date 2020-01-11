@@ -1,7 +1,13 @@
 # EmbeddedSystem-term
-한백전자 HBE-SM7-S4412를 이용한 숫자게임 
+---------Image---------
+![noname01](https://user-images.githubusercontent.com/54853873/72201310-cb12cd80-3495-11ea-81ae-950f2c66bb31.png)
 
-19년 11월부터 12월 10일까지 진행한 Term-Project이며 사용한 Device Driver로는
+---------Introduction---------
+한백전자 HBE-SM7-S4412를 이용한 숫자게임 
+19년 11월부터 12월 10일까지 진행한 Term-Project입니다.
+
+---------explanation---------
+사용한 Device Driver로는
   1. Dotmatrix
   2. Keypad
   3. Led
