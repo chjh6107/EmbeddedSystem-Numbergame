@@ -10,6 +10,7 @@
   6. TextLcd
 가 있습니다.
 
+응용프로그램 소스파일은 term_cjh 디렉토리 내의 term_cjh.c 파일입니다.
 Device Driver의 코드에는 따로 주석을 작성하지 않았습니다.
 
 README는 '2020.01.11.에 작성하였습니다.
