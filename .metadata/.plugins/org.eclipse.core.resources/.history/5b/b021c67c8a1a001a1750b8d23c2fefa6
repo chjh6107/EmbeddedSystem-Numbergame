@@ -1,0 +1,178 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <assert.h>
+#include <time.h>
+#include <pthread.h>
+#include "font.h"
+
+#ifndef TEXTLCD_H_
+#define TEXTLCD_H_
+
+#define TEXTLCD_ON 				1
+#define TEXTLCD_OFF 			2
+#define TEXTLCD_INIT 			3
+#define TEXTLCD_CLEAR			4
+#define TEXTLCD_LINE1			5
+#define TEXTLCD_LINE2			6
+#define TEXTLCD_CGRAM			7
+#define TEXTLCD_HOME			8
+#endif /* TEXTLCD_H_ */
+
+void *StartLedThread(int fd_led);
+void *StartPiezoThread(int fd_piezo);
+void *StartDotThread(int fd_dot);
+void *DotStageCountThread(void); //dotMatrix 스테이지 타이머
+
+int StageStartAlert(int fd_a, int fd_b, int fd_c, int fd_d);
+
+int dotstg_cntr=0; //dotmatrix 스테이지 타이머를 위한 변수
+int stage = 1, score = 0; //각 게임 스테이지와 스코어
+
+int main(){
+	int fd_led, fd_seg, fd_piezo, fd_dot, fd_keypad, fd_text;
+
+
+	fd_led = open("/dev/fpga_led_cjh",O_WRONLY);
+	fd_seg = open("/dev/fpga_segment_cjh",O_WRONLY);
+	fd_piezo = open("/dev/fpga_piezo_cjh",O_WRONLY);
+	fd_dot = open("/dev/fpga_dotmatrix_cjh",O_WRONLY);
+	fd_keypad = open("/dev/fpga_keypad_cjh",O_RDWR);
+	fd_text = open("/dev/fpga_textlcd_cjh", O_WRONLY);
+
+	assert(fd_led != -1);
+	assert(fd_seg != -1);
+	assert(fd_piezo != -1);
+	assert(fd_dot != -1);
+	assert(fd_keypad != -1);
+	assert(fd_text != -1);
+
+	ioctl(fd_text, TEXTLCD_INIT);
+
+	//반복문 사용 예정
+
+	int alert_checker=0; //함수가 정상적으로 수행했는지 체크하기 위한 정수현변수
+	//스테이지 시작 시 카운트를 하기 위한 함수. return값을 alert_checker에 저장
+	alert_checker = StageStartAlert(fd_led, fd_piezo, fd_dot, fd_text);
+	printf("alert_checker = %d\n",alert_checker);
+	//Stage
+
+	printf("stagestartalert done\n");
+
+	ioctl(fd_text, TEXTLCD_OFF);
+	close(fd_led);
+	close(fd_piezo);
+	close(fd_seg);
+	close(fd_dot);
+	close(fd_keypad);
+	close(fd_text);
+
+	return 0;
+}
+
+	/*fd_a = fd_led, fd_b = fd_piezo, fd_c = fd_dot, fd_d = fd_text*/
+int StageStartAlert(int fd_a, int fd_b, int fd_c, int fd_d){
+	//게임 시작 부분을 출력하기 위한 스레드 변수
+	pthread_t alert_led_t, alert_piezo_t, alert_dot_t;
+
+	pthread_create(&alert_led_t, NULL, &StartLedThread, fd_a);
+	pthread_create(&alert_piezo_t, NULL, &StartPiezoThread, fd_b);
+	pthread_create(&alert_dot_t, NULL, &StartDotThread, fd_c);
+
+//	printf("led thread res: %d\n", pthread_join(alert_led_t,NULL));
+//	printf("piezo thread res : %d\n", pthread_join(alert_piezo_t,NULL));
+//	printf("dot thread res : %d\n",pthread_join(alert_dot_t,NULL));
+	if(pthread_join(alert_led_t,NULL) == 0
+			&& pthread_join(alert_piezo_t,NULL) == 0
+			&& pthread_join(alert_dot_t,NULL) == 0){
+		printf("StageStartAlert function Job done\n");
+		return 1; //thread들이 정상종료 하면 1을 return
+	}
+}
+
+void *StartLedThread(int fd_led){ //스테이지 카운트 LED thread
+	int i, led_val=231;
+
+		for(i=3;i>0;i--){ //3초간 카운트
+
+			write(fd_led,&led_val,1);	//ㅇㅇㅇ - - ㅇㅇㅇ
+
+			if(led_val == 231) 			//ㅇㅇ- -  - - ㅇㅇ
+				led_val = 195;
+			else if(led_val == 195)		//ㅇ - - - - - - ㅇ
+				led_val = 129;
+
+			sleep(1);
+		}
+		led_val =0; //마지막 - - - - - - - -
+		write(fd_led,&led_val,1);
+		sleep(1);
+		pthread_exit(NULL);
+}
+
+void *StartPiezoThread(int fd_piezo){ //스테이지 카운트 사운드 thread
+	int i;
+	int val[]={0x03,0x00,0x03,0x00,0x03,0x00,0x13,0x00};
+	int len[]={800000,200000,800000,200000,800000,200000,800000,200000};
+
+	for(i=0; i<sizeof(val);i++){
+//		write(fd_piezo,&val[i],1);
+
+		if(i==7) //thread가 꺼지지 않는 오류로 반복문 마지막일 때 종료
+			pthread_exit(NULL);
+
+		usleep(len[i]);
+	}
+	pthread_exit(NULL);
+}
+
+void *StartDotThread(int fd_dot){ //스테이지 카운트 dotmatrix thread
+	int i, j;
+	char result[20], tmp[2];
+	pthread_t counter;
+	pthread_create(&counter,NULL,&DotStageCountThread,NULL); //카운터 시작
+
+	for(;;){
+		for(i=0;i<2;i++){
+			int offset =0;
+			if((i % 2) != 0)
+				offset=10;
+
+			for (j = 0; j < 5; j++) {
+				if(dotstg_cntr == 0)		//03
+					sprintf(tmp, "%x%x", font_three[i][j] / 16, font_three[i][j] % 16);
+				else if(dotstg_cntr == 1)	//02
+					sprintf(tmp, "%x%x", font_two[i][j] / 16, font_two[i][j] % 16);
+				else if(dotstg_cntr == 2)	//01
+					sprintf(tmp, "%x%x", font_one[i][j] / 16, font_one[i][j] % 16);
+				else if(dotstg_cntr == 3)	//시작
+					sprintf(tmp, "%x%x", font_sizak[i][j] / 16, font_sizak[i][j] % 16);
+				else if(dotstg_cntr == 4)	//dotmatrix clear
+					sprintf(tmp, "%x%x", font_clr[i][j] / 16, font_clr[i][j] % 16);
+
+				result[offset++] = tmp[0];
+				result[offset++] = tmp[1];
+			}
+			usleep(2000);
+		write(fd_dot,&result[0],20);
+		}
+		if(dotstg_cntr == 4)
+			pthread_exit(NULL);
+	}
+
+}
+
+//dotmatrix 잔상효과를 사용하기 위해 사용하는 타이머thread
+void *DotStageCountThread(void){
+	int i;
+	for(i = 0; i < 3 ; i ++){
+		printf("dot counter : %d\n",dotstg_cntr);
+		sleep(1);
+		dotstg_cntr++;
+	}
+	usleep(800000);
+	dotstg_cntr = 4; //dotmatrix clear
+
+	pthread_exit(NULL);
+}

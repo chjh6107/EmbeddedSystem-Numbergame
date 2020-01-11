@@ -1,0 +1,12 @@
+02:03:14 **** Incremental Build of configuration Default for project fpga_piezo_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_piezo_cjh.ko ****
+3635 KB/s (58073 bytes in 0.015s)
+
+**** Load Module: /system/lib/modules/fpga_piezo_cjh.ko ****
+fpga_piezo_cjh 1574 0 - Live 0x00000000
+
+
+02:03:16 Build Finished (took 1s.981ms)
+

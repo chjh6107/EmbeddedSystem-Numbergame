@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+pathvariable.ArduinoLibPath=C\:/AndroXStudio/legacy/arduino/libraries
+pathvariable.CoreArduinoPath=C\:/AndroXStudio/legacy/arduino/hardware/arduino/cores
+pathvariable.PinArduinoPath=C\:/AndroXStudio/legacy/arduino/hardware/arduino/variants
+pathvariable.PivateLibPath=C\:/AndroXStudio/workspace/.metadata/arduino/libraries
+refresh.enabled=true
+version=1

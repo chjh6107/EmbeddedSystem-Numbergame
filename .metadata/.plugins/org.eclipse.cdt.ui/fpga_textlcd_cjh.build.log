@@ -1,0 +1,12 @@
+02:03:21 **** Incremental Build of configuration Default for project fpga_textlcd_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_textlcd_cjh.ko ****
+2130 KB/s (68062 bytes in 0.031s)
+
+**** Load Module: /system/lib/modules/fpga_textlcd_cjh.ko ****
+fpga_textlcd_cjh 3349 0 - Live 0x00000000
+
+
+02:03:23 Build Finished (took 1s.904ms)
+

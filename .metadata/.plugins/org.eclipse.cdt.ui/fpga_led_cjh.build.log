@@ -1,0 +1,12 @@
+02:03:11 **** Incremental Build of configuration Default for project fpga_led_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_led_cjh.ko ****
+3642 KB/s (58183 bytes in 0.015s)
+
+**** Load Module: /system/lib/modules/fpga_led_cjh.ko ****
+fpga_led_cjh 1636 0 - Live 0x00000000
+
+
+02:03:12 Build Finished (took 1s.903ms)
+

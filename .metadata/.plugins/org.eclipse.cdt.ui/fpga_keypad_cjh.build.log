@@ -1,0 +1,12 @@
+02:03:07 **** Incremental Build of configuration Default for project fpga_keypad_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_keypad_cjh.ko ****
+60 KB/s (62425 bytes in 1.000s)
+
+**** Load Module: /system/lib/modules/fpga_keypad_cjh.ko ****
+fpga_keypad_cjh 2144 0 - Live 0x00000000
+
+
+02:03:09 Build Finished (took 1s.919ms)
+

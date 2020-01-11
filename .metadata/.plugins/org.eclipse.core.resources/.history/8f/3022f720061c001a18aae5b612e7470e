@@ -1,0 +1,80 @@
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+
+#include <linux/fs.h>
+#include <linux/miscdevice.h>
+#include <linux/mutex.h>
+	
+static int fpga_keypad_cjh_open(struct inode * inode, struct file * file){
+	printk("fpga_keypad_cjh_open, \n");
+	
+	return 0;
+}
+
+static int fpga_keypad_cjh_release(struct inode * inode, struct file * file){
+	printk("fpga_keypad_cjh_release, \n");
+	
+	return 0;
+}
+
+static ssize_t fpga_keypad_cjh_read(struct file * file, char * buf, size_t length, loff_t * ofs){
+	printk("fpga_keypad_cjh_read, \n");
+	
+	return 0;
+}
+
+static ssize_t fpga_keypad_cjh_write(struct file * file, const char * buf, size_t length, loff_t * ofs){
+	printk("fpga_keypad_cjh_write, \n");
+	
+	return 0;
+}
+
+static DEFINE_MUTEX(fpga_keypad_cjh_mutex);
+static long fpga_keypad_cjh_ioctl(struct file * file, unsigned int cmd, unsigned long arg){
+	printk("fpga_keypad_cjh_ioctl, \n");
+	
+	switch(cmd){
+		default:
+			mutex_unlock(&fpga_keypad_cjh_mutex);
+			return ENOTTY;
+	}
+	
+	mutex_unlock(&fpga_keypad_cjh_mutex);
+	return 0;
+}
+
+static struct file_operations fpga_keypad_cjh_fops = {
+	.owner = THIS_MODULE,
+	.open = fpga_keypad_cjh_open,
+	.release = fpga_keypad_cjh_release,
+	.read = fpga_keypad_cjh_read,
+	.write = fpga_keypad_cjh_write,
+	.unlocked_ioctl = fpga_keypad_cjh_ioctl,
+};
+
+static struct miscdevice fpga_keypad_cjh_driver = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name = "fpga_keypad_cjh",
+	.fops = &fpga_keypad_cjh_fops,
+};
+
+static int fpga_keypad_cjh_init(void){
+	printk("fpga_keypad_cjh_init, \n");
+	
+	return misc_register(&fpga_keypad_cjh_driver);
+}
+
+static void fpga_keypad_cjh_exit(void){
+	printk("fpga_keypad_cjh_exit, \n");
+
+	misc_deregister(&fpga_keypad_cjh_driver);
+	
+}
+
+module_init(fpga_keypad_cjh_init);
+module_exit(fpga_keypad_cjh_exit);
+
+MODULE_AUTHOR("Author of the fpga_keypad_cjh to put it here.");
+MODULE_DESCRIPTION("Description of the fpga_keypad_cjh to put it here.");
+MODULE_LICENSE("Dual BSD/GPL");

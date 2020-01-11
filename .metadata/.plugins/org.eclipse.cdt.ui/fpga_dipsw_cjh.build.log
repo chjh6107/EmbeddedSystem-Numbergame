@@ -1,0 +1,12 @@
+00:21:34 **** Incremental Build of configuration Default for project fpga_dipsw_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_dipsw_cjh.ko ****
+1914 KB/s (61170 bytes in 0.031s)
+
+**** Load Module: /system/lib/modules/fpga_dipsw_cjh.ko ****
+fpga_dipsw_cjh 1653 0 - Live 0x00000000 (P)
+
+
+00:21:36 Build Finished (took 2s.106ms)
+

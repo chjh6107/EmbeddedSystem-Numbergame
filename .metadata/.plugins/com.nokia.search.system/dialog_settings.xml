@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="">
+		<item value="1000" key="com.nokia.search.system.resultpage.limit"/>
+	</section>
+	<section name="com.nokia.search.system.text.FileSearchResultPage">
+		<item value="1000" key="com.nokia.search.system.resultpage.limit"/>
+	</section>
+	<section name="TextSearchPage">
+		<item value="true" key="CASE_SENSITIVE"/>
+		<item value="false" key="REG_EX_SEARCH"/>
+		<item value="false" key="SEARCH_DERIVED"/>
+		<item value="true" key="INCLUDE_SUBFOLDERS"/>
+		<item value="false" key="INCLUDE_HIDDEN"/>
+		<item value="1" key="HISTORY_SIZE"/>
+		<list key="ADDED_FILENAMES">
+			<item value="*.c"/>
+			<item value="*"/>
+		</list>
+		<list key="ADDED_FOLDERS">
+			<item value="C:\AndroXStudio\legacy\cygwin\platform\linux"/>
+			<item value=""/>
+		</list>
+		<section name="HISTORY0">
+			<item value="true" key="includeSubfolders"/>
+			<item value="get_random_bytes()" key="textPattern"/>
+			<item value="4" key="scope"/>
+			<item value="false" key="regExSearch"/>
+			<item value="false" key="includeHidden"/>
+			<item value="true" key="caseSensitive"/>
+			<item value="C:\AndroXStudio\legacy\cygwin\platform\linux" key="folderName"/>
+			<item value="false" key="includeArchives"/>
+			<list key="fileNames">
+				<item value="*.c"/>
+			</list>
+		</section>
+	</section>
+</section>

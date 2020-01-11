@@ -1,0 +1,12 @@
+02:03:18 **** Incremental Build of configuration Default for project fpga_segment_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_segment_cjh.ko ****
+3918 KB/s (62593 bytes in 0.015s)
+
+**** Load Module: /system/lib/modules/fpga_segment_cjh.ko ****
+fpga_segment_cjh 2185 0 - Live 0x00000000
+
+
+02:03:20 Build Finished (took 1s.966ms)
+

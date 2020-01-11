@@ -1,0 +1,21 @@
+.SILENT:
+
+include C:/AndroXStudio/Tools/make_comm
+
+all: $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -save-temps -march=armv7-a -O2 -o test_text $(OBJECTS) \
+		$(LLIB)/libgcc.a
+
+	echo 
+	echo "**** Install:" /data/local/tmp/test_text "****"
+	$(ADB) push test_text /data/local/tmp
+	$(ADB) shell chmod 755 /data/local/tmp/test_text
+	echo 
+	echo "**** Run ****"
+	$(ADB) shell TIMEFORMAT="" time /data/local/tmp/test_text
+
+clean:
+	rm -f *.o
+	rm -f *.i
+	rm -f *.s
+	rm -f test_text

@@ -1,0 +1,6 @@
+Arduino\ Board=Arduino Mega 2560 or Mega ADK
+Arduino\ IDE\ Version=1.0.3
+Arduino\ Path=C\:\\AndroXStudio\\legacy\\arduino
+Arduino\ Port=COM3
+Private\ Library\ Path=C\:\\AndroXStudio\\workspace\\.metadata\\arduino\\libraries
+eclipse.preferences.version=1

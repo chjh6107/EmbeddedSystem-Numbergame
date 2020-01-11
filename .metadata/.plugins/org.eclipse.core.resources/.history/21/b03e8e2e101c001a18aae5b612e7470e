@@ -1,0 +1,399 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <assert.h>
+#include <time.h>
+#include <pthread.h>
+#include "font.h"
+
+#ifndef TEXTLCD_H_
+#define TEXTLCD_H_
+
+#define TEXTLCD_ON 				1
+#define TEXTLCD_OFF 			2
+#define TEXTLCD_INIT 			3
+#define TEXTLCD_CLEAR			4
+#define TEXTLCD_LINE1			5
+#define TEXTLCD_LINE2			6
+#define TEXTLCD_CGRAM			7
+#define TEXTLCD_HOME			8
+#endif /* TEXTLCD_H_ */
+
+void *StartLedThread(int fd_led);
+void *StartPiezoThread(int fd_piezo);
+void *StartDotThread(int fd_dot);
+void *CountDotStageThread(void); //dotMatrix 스테이지 타이머
+///////////////////////
+void *ScoreThread(int fd_seg);
+void *PiezoBgmThread(int fd_piezo);
+void *InputAnswerThread(int fd_keypad);
+	void *CountKeypadThread(void); //Keypad 카운터
+
+int StageLCD(int fd_text); // 카운터 시작 전 LCD에 스테이지를 일시적으로 출력
+int StageStartAlert(int fd_led, int fd_piezo, int fd_dot);
+int StageMain(int fd_piezo,int fd_text, int fd_keypad);
+	int CompaerAnswer(char*,int);
+
+int fd_text;
+int dotstg_cntr; //dotmatrix 스테이지 타이머를 위한 변수
+int stage; //각 게임 스테이지
+int score = 0; //게임 score
+int stop = 0; //각종 상황에서 thread를 끌 수 있도록 하는 신호 변수
+int key_timer=0; //keypad 타이머를 위한 변수
+int res=0; //게임 결과
+char question[10]={}; //문제
+char answer[10]={}; //답
+int main(){
+	int fd_led, fd_seg, fd_piezo, fd_dot, fd_keypad;
+	pthread_t score_t;
+	res =0;
+	fd_led = open("/dev/fpga_led_cjh",O_WRONLY);
+	fd_seg = open("/dev/fpga_segment_cjh",O_WRONLY);
+	fd_piezo = open("/dev/fpga_piezo_cjh",O_WRONLY);
+	fd_dot = open("/dev/fpga_dotmatrix_cjh",O_WRONLY);
+	fd_keypad = open("/dev/fpga_keypad_cjh",O_RDWR);
+	fd_text = open("/dev/fpga_textlcd_cjh", O_WRONLY);
+
+	assert(fd_led != -1);
+	assert(fd_seg != -1);
+	assert(fd_piezo != -1);
+	assert(fd_dot != -1);
+	assert(fd_keypad != -1);
+	assert(fd_text != -1);
+
+	ioctl(fd_text, TEXTLCD_INIT);
+
+	pthread_create(&score_t,NULL,&ScoreThread,fd_seg);//스코어를 출력하는 스레드 생성
+	for(stage = 1 ; stage <= 8 ; stage++){ //총 8스테이지까지 실행
+
+		printf("---stage %d ---\n",stage);
+
+		 //StageStartAlert함수 내 thread들이 정상적으로 종료되었는지 체크하기 위한 변수
+		int alert_checker=0;
+		printf("alert_checker = %d\n", alert_checker);
+
+		StageLCD(fd_text);
+		//스테이지 시작 시 카운트를 하기 위한 함수. return값을 alert_checker에 저장
+		alert_checker = StageStartAlert(fd_led, fd_piezo, fd_dot);
+		printf("alert_checker = %d\n",alert_checker);
+
+		//위 함수 내 thread가 정상적으로 종료되면 스테이지 시작
+		if(alert_checker == 1){
+			StageMain(fd_piezo, fd_text, fd_keypad); //Main 게임 함수
+
+			if(res == -1){
+				printf("------FAILED------\n");
+				return 0;
+			}
+		}
+
+		printf("\n\n");
+	}
+
+	ioctl(fd_text, TEXTLCD_OFF);
+	close(fd_led);
+	close(fd_piezo);
+	close(fd_seg);
+	close(fd_dot);
+	close(fd_keypad);
+	close(fd_text);
+
+	return 0;
+}
+
+int StageLCD(int fd_text){
+	printf("called StageLCD\n");
+	char *outputstg = "    ==STAGE==";
+	char *outputnum = malloc(sizeof(char) * 16);
+	char *transnum = malloc(sizeof(char) * 4); //정수형 스테이지를 char형으로 변환 후 저장하는 변수
+
+	strcpy(outputnum,"        ");
+	sprintf(transnum,"%d",stage); //stage를 문자열로 변환 후 transnum에 저장
+	strcat(outputnum,transnum); //공백 뒤에 transnum 붙임
+
+	ioctl(fd_text, TEXTLCD_CLEAR);
+	ioctl(fd_text, TEXTLCD_LINE1); //textlcd 첫째 줄에 outputstg 출력
+	write(fd_text, outputstg, strlen(outputstg));
+	ioctl(fd_text, TEXTLCD_LINE2); //textlcd 둘째 줄에 outputnum 출력
+	write(fd_text, outputnum, strlen(outputnum));
+}
+
+//각 디바이스로 카운트 다운을 위한 함수
+int StageStartAlert(int fd_led, int fd_piezo, int fd_dot){
+	printf("called StageStartAlert\n");
+	//게임 시작 부분을 출력하기 위한 스레드 변수
+	pthread_t alert_led_t, alert_piezo_t, alert_dot_t;
+
+	pthread_create(&alert_led_t, NULL, &StartLedThread, fd_led);
+	pthread_create(&alert_piezo_t, NULL, &StartPiezoThread, fd_piezo);
+	pthread_create(&alert_dot_t, NULL, &StartDotThread, fd_dot);
+
+	if(pthread_join(alert_led_t,NULL) == 0
+			&& pthread_join(alert_piezo_t,NULL) == 0
+			&& pthread_join(alert_dot_t,NULL) == 0){
+		printf("StageStartAlert function Job done\n");
+		return 1; //thread들이 정상종료 하면 1을 return
+	}
+}
+
+int StageMain(int fd_piezo, int fd_text, int fd_keypad){
+	printf("called StageMainqweqwe\n");
+
+	int i;
+	pthread_t piezo_bgm;
+
+	srand(time(NULL)); //난수 발생
+
+	//16진수 배열
+	char hex_arr[16] = {'0','1','2','3','4','5','6','7',
+						'8','9','A','B','C','D','E','F'};
+
+	//char *question = malloc(sizeof(char) * 10);//문제
+
+	for(i=0;i<10;i++)//매 stage마다 question 배열에 새로운 hex값 입력
+		question[i]=hex_arr[rand() % 16];//16진수 중 하나를 question 배열에 입력
+
+	printf("question = %s\n",question);
+	//pthread_create(&piezo_bgm, NULL, &PiezoBgmThread, fd_piezo);
+	ioctl(fd_text,TEXTLCD_CLEAR);
+	ioctl(fd_text,TEXTLCD_LINE1);
+	write(fd_text,question,strlen(question));
+
+	Compare_answer(question,fd_keypad);
+
+
+	//printf("piezo status = %d\n",pthread_join(piezo_bgm,NULL));
+
+
+
+	printf("StageMain done\n");
+}
+
+/*-------------------이하 StageStartAlert 함수의 THREAD-------------------*/
+void *StartLedThread(int fd_led){ //스테이지 카운트 LED thread
+	int i, led_val=231;
+
+		for(i=3;i>0;i--){ //3초간 카운트
+
+			write(fd_led,&led_val,1);	//ㅇㅇㅇ - - ㅇㅇㅇ
+
+			if(led_val == 231) 			//ㅇㅇ- -  - - ㅇㅇ
+				led_val = 195;
+			else if(led_val == 195)		//ㅇ - - - - - - ㅇ
+				led_val = 129;
+
+			sleep(1);
+		}
+		led_val =0; //마지막 - - - - - - - -
+		write(fd_led,&led_val,1);
+		sleep(1);
+		pthread_exit(NULL);
+}
+
+void *StartPiezoThread(int fd_piezo){ //스테이지 카운트 사운드 thread
+	int i;
+	int val[]={0x03,0x00,0x03,0x00,0x03,0x00,0x13,0x00};
+	int len[]={800000,200000,800000,200000,800000,200000,800000,200000};
+
+	for(i=0; i<sizeof(val);i++){
+		write(fd_piezo,&val[i],1);
+
+		if(i==7) //thread가 꺼지지 않는 오류가 발생하여 반복문 마지막일 때 종료
+			pthread_exit(NULL);
+
+		usleep(len[i]);
+	}
+}
+
+void *StartDotThread(int fd_dot){ //스테이지 카운트 dotmatrix thread
+	int i, j;
+	char result[20], tmp[2];
+	pthread_t counter;
+	pthread_create(&counter,NULL,&CountDotStageThread,NULL); //카운터 시작
+
+	for(;;){
+		for(i=0;i<2;i++){
+			int offset =0;
+			if((i % 2) != 0)
+				offset=10;
+
+			for (j = 0; j < 5; j++) {
+				if(dotstg_cntr == 0)		//03
+					sprintf(tmp, "%x%x", font_three[i][j] / 16, font_three[i][j] % 16);
+				else if(dotstg_cntr == 1)	//02
+					sprintf(tmp, "%x%x", font_two[i][j] / 16, font_two[i][j] % 16);
+				else if(dotstg_cntr == 2)	//01
+					sprintf(tmp, "%x%x", font_one[i][j] / 16, font_one[i][j] % 16);
+				else if(dotstg_cntr == 3)	//시작
+					sprintf(tmp, "%x%x", font_sizak[i][j] / 16, font_sizak[i][j] % 16);
+				else if(dotstg_cntr == 4)	//dotmatrix clear
+					sprintf(tmp, "%x%x", font_clr[i][j] / 16, font_clr[i][j] % 16);
+
+				result[offset++] = tmp[0];
+				result[offset++] = tmp[1];
+			}
+			usleep(2000);
+		write(fd_dot,&result[0],20);
+		}
+		if(dotstg_cntr == 4)
+			pthread_exit(NULL);
+	}
+
+}
+
+//dotmatrix 잔상효과를 사용하기 위해 사용하는 타이머thread
+void *CountDotStageThread(void){
+	int i;
+	dotstg_cntr = 0;
+
+	for(i = 0; i < 3 ; i ++){
+		sleep(1);
+		dotstg_cntr++; //마지막에는 3까지 누적 후 반복문 빠져나옴
+	}
+	usleep(500000); //시작부분은 0.5초만 출력
+	dotstg_cntr = 4; //dotmatrix clear
+
+	pthread_exit(NULL);
+}
+
+/*------------------------StageStartAlert 함수 Thread 끝----------*/
+
+/*------------------------StageMain 함수의 Thread------------------*/
+
+//게임의 bgm 출력
+void *PiezoBgmThread(int fd_piezo){
+	int i;
+
+	int val[] = { 0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x05, 0x00,
+			0x04, 0x00, 0x03, 0x00, 0x07, 0x00, 0x06, 0x00,
+			0x05, 0x00, 0x06, 0x00, 0x05, 0x00, 0x04, 0x00,
+			0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x05, 0x00,
+			0x04, 0x00, 0x03, 0x00, 0x12, 0x00, 0x06, 0x00, //첫소절
+			0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x05, 0x00,
+			0x04, 0x00, 0x03, 0x00, 0x07, 0x00, 0x06, 0x00,
+			0x05, 0x00, 0x06, 0x00, 0x05, 0x00, 0x04, 0x00,
+			0x11, 0x00, 0x11, 0x00, 0x07, 0x00, 0x07, 0x00,
+			0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x05, 0x00,
+			0x04, 0x00, 0x03, 0x00, 0x07, 0x00, 0x06, 0x00,
+			0x05, 0x00, 0x06, 0x00, 0x05, 0x00, 0x04, 0x00,
+			0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x05, 0x00,
+			0x04, 0x00, 0x03, 0x00, 0x12, 0x00, 0x06, 0x00};
+
+	int len[] = { 150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 500000, 1000, 500000, 1000, //첫소절
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 100000,
+			150000, 3000, 500000, 150000, 150000, 3000, 500000, 150000,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 150000, 1500, 150000, 1500,
+			150000, 1500, 150000, 1500, 500000, 1000, 500000, 1000};
+
+	for(i=0; i<sizeof(val);i++){
+		write(fd_piezo,&val[i],1);
+
+		if(stop == 1)
+			pthread_exit(NULL);
+		if(i==112)
+			pthread_exit(NULL);
+		usleep(len[i]);
+	}
+
+}
+
+int Compare_answer(char* question, int fd_keypad){
+	int i;
+	printf("called Compare_answer\n");
+
+	pthread_t input_t;
+
+	printf("question on func = %s\n",question);
+	pthread_create(&input_t, NULL, &InputAnswerThread, fd_keypad);
+
+	pthread_join(input_t, NULL);
+}
+
+ //7-segment에 스코어를 출력하는 thread
+void *ScoreThread(int fd_seg){
+	char nums[7];
+
+		for(;;){
+			sprintf(nums,"%06d",score);
+
+			write(fd_seg, nums, 6);
+		}
+}
+
+
+//답안을 입력하는 thread
+void *InputAnswerThread(int fd_keypad){
+	int i, prev_t=0, check_t;
+	pthread_t keypad_counter;
+	char buf[10]={}, check_buf[10]={}, prev_buf[10] = {};
+
+	pthread_create(&keypad_counter,NULL,&CountKeypadThread,NULL); //타이머 시작
+
+	for(;;){
+			read(fd_keypad, buf, 1);
+
+			for(i=0;i<sizeof(buf);i++)
+				check_buf[i] = buf[i];
+			check_t = key_timer;
+
+			if((check_buf[0] != prev_buf[0]) || (prev_t != key_timer)){
+				for(i=0;i<10;i++){
+					if(answer[i] == '\0' ){
+						answer[i] = buf[0];
+
+						if(question[i] == answer[i])
+							score += 100;
+						if(question[i] != answer[i] || key_timer > 2){
+							stop=1;
+							res = -1;}
+							pthread_exit(NULL);
+						break;
+					}
+
+				}
+			}
+			if(stop==1)
+				pthread_exit(NULL);
+
+			ioctl(fd_text,TEXTLCD_LINE2);
+			write(fd_text,answer,strlen(answer));
+
+
+			for(i=0;i<sizeof(buf);i++)
+				prev_buf[i]=buf[i];
+			prev_t = key_timer;
+			usleep(5000);
+			memset(buf,0,sizeof(buf));
+
+	}
+	if(pthread_join(keypad_counter,NULL) == 0)
+		printf("CountKeypad done\n");
+
+
+}
+//keypad 입력을 원할히 하기 위한 thread 함수
+void *CountKeypadThread(void){
+	int i;
+	key_timer =0;
+
+	for(i=0;i<10;i++){
+	//	printf("Count keypad time = %d\n",key_timer);
+		key_timer++;
+
+		if(stop == 1)
+			pthread_exit(NULL);
+		sleep(1);
+	}
+		pthread_exit(NULL);
+}
+/*------------------------StageMain 함수의 Thread------------------*/

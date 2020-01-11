@@ -1,0 +1,9 @@
+06:16:57 **** Incremental Build of configuration Default for project dot_test ****
+make all 
+dot_test.c:8:18: fatal error: font.h: No such file or directory
+compilation terminated.
+Makefile:6: recipe for target `all' failed
+make: *** [all] Error 1
+
+06:16:57 Build Finished (took 94ms)
+

@@ -1,0 +1,10 @@
+23:43:25 **** Incremental Build of configuration Default for project lcd_sample ****
+make all 
+
+**** Install: /data/local/tmp/lcd_sample ****
+838 KB/s (6436 bytes in 0.007s)
+
+**** Run ****
+
+23:43:26 Build Finished (took 237ms)
+

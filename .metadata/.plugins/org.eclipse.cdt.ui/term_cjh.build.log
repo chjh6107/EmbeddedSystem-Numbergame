@@ -1,0 +1,93 @@
+03:58:53 **** Incremental Build of configuration Default for project term_cjh ****
+make all 
+term_cjh.c: In function 'main':
+term_cjh.c:78:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:78:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:96:5: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:96:5: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c: In function 'StageStartAlert':
+term_cjh.c:155:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:155:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:156:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:156:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:157:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:157:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c: In function 'StageMain':
+term_cjh.c:186:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:186:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:187:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:187:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:188:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:188:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:189:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(void)'
+term_cjh.c: In function 'StartDotThread':
+term_cjh.c:245:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(void)'
+term_cjh.c: In function 'Compare_answer':
+term_cjh.c:486:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:486:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c: In function 'InputAnswerThread':
+term_cjh.c:508:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(void)'
+term_cjh.c:524:20: warning: comparison between pointer and integer [enabled by default]
+term_cjh.c: In function 'SuccessAlert':
+term_cjh.c:575:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:575:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+term_cjh.c:577:3: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+term_cjh.c:577:3: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from term_cjh.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+
+**** Install: /data/local/tmp/term_cjh ****
+1777 KB/s (18200 bytes in 0.010s)
+
+**** Run ****
+
+03:58:54 Build Finished (took 879ms)
+

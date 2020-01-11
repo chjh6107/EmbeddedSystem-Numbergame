@@ -1,0 +1,17 @@
+20:29:52 **** Build of configuration Default for project test_text ****
+make all 
+test_text.c: In function 'main':
+test_text.c:49:2: warning: passing argument 3 of 'pthread_create' from incompatible pointer type [enabled by default]
+In file included from test_text.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(int)'
+test_text.c:49:2: warning: passing argument 4 of 'pthread_create' makes pointer from integer without a cast [enabled by default]
+In file included from test_text.c:7:0:
+C:/AndroXStudio/legacy/ndk/platforms/android-14/arch-arm/usr/include/pthread.h:143:5: note: expected 'void *' but argument is of type 'int'
+
+**** Install: /data/local/tmp/test_text ****
+7 KB/s (8072 bytes in 1.000s)
+
+**** Run ****
+
+20:29:53 Build Finished (took 297ms)
+

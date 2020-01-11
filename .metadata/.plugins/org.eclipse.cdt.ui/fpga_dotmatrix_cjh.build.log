@@ -1,0 +1,12 @@
+02:03:03 **** Incremental Build of configuration Default for project fpga_dotmatrix_cjh ****
+make all 
+
+**** Install: /system/lib/modules/fpga_dotmatrix_cjh.ko ****
+4449 KB/s (71074 bytes in 0.015s)
+
+**** Load Module: /system/lib/modules/fpga_dotmatrix_cjh.ko ****
+fpga_dotmatrix_cjh 2196 0 - Live 0x00000000
+
+
+02:03:05 Build Finished (took 1s.997ms)
+
