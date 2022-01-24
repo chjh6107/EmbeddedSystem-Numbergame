@@ -1,16 +1,26 @@
 # EmbeddedSystem-term
-##Image
+
+
+## Link
+
+
+[![눼루퉈~](http://img.youtube.com/vi/G8ccEGlTSGM/0.jpg)](https://youtu.be/G8ccEGlTSGM?t=0s) 
+
+
+
+## Image
+
 
 ![noname01](https://user-images.githubusercontent.com/54853873/72201310-cb12cd80-3495-11ea-81ae-950f2c66bb31.png)
 
 
----------Introduction---------
+## Introduction
 
 한백전자 HBE-SM7-S4412를 이용한 숫자게임 
 19년 11월부터 12월 10일까지 진행한 Term-Project입니다.
 
 
----------explanation---------
+## Explanation
 
 AndroX Studio를 사용하였고 내장된 eclipse를 사용하여 코드를 작성하였습니다.
 
